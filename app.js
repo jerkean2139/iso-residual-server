@@ -9,6 +9,7 @@ import ReportsV2Route from './routes/reportsV2.route.js';
 import reportR from './routes/reports.route.js';
 import authR from './routes/auth.route.js';
 import userRouter from './routes/users.route.js';
+import webhooksRouter from './routes/webhooks.route.js';
 // import middleware
 import { isAdmin } from './middleware/admin.middleware.js';
 // import db
@@ -35,6 +36,7 @@ app.use('/api/v2/users', isAdmin, userRouter);
 app.use('/api/v2/agents', isAdmin, AgentsRoute);
 app.use('/api/v2/invoices', isAdmin, invoicesRoute);
 app.use('/api/v2/dashboard', DashboardRoute);
+app.use('/api/v2/webhooks', webhooksRouter);
 
 // setup db
 db.init(config.get('mongo'));
