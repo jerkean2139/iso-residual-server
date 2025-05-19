@@ -136,7 +136,8 @@ export default class AgentsCoordinator {
                 return { success: false, message: "Agent not found" };
             }
             // Apply the updates to the agent object
-            const updatedAgent = new Agent(organizationID, agent.fName, agent.lName, agent.clients);
+            const updatedAgent = new Agent(organizationID, agent.fName, agent.lName, agent.company, agent.manager,agent.clients,agent.additional_splits);
+
             updatedAgent.updateAgent(update); // This assumes updateAgent is defined in the Agent class
 
             const result = await AgentsModel.updateAgent(organizationID, updatedAgent);
