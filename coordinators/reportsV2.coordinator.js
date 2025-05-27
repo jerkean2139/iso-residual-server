@@ -53,13 +53,13 @@ export default class ReportsV2Coor {
 static updateReport = async (reportID, report) => {
   try {
       // Log the initiation of the update process with context
-      console.log(`Coordinator: Initiating update for reportID: ${reportID}`, { reportID, report });
+      // console.log(`Coordinator: Initiating update for reportID: ${reportID}`, { reportID, report });
 
       // Call the model to update the report
       const updatedReport = await ReportsV2M.updateReport(reportID, report);
 
       // Log successful update
-      console.log(`Coordinator: Successfully updated report with reportID: ${reportID}`);
+      // console.log(`Coordinator: Successfully updated report with reportID: ${reportID}`);
 
       return updatedReport;
   } catch (error) {
@@ -257,31 +257,31 @@ static updateReport = async (reportID, report) => {
    // build an agent summary report
    static buildAgentSummaryReport = async (organizationID, monthYear) => {
     try {
-      console.log(`Starting generation of agent summary report for Organization: ${organizationID}, Month-Year: ${monthYear} in the coordinator`);
+      // console.log(`Starting generation of agent summary report for Organization: ${organizationID}, Month-Year: ${monthYear} in the coordinator`);
   
       // Fetch agents for the organization
-      console.log(`Fetching agents for Organization: ${organizationID}`);
+      // console.log(`Fetching agents for Organization: ${organizationID}`);
       const agents = await AgentsModel.getAgents(organizationID);
       if (!agents || agents.length === 0) {
         console.error(`No agents found for Organization: ${organizationID}`);
         throw new Error('No agents found for this organization.');
       }
-      console.log(`Successfully fetched ${agents.length} agents`);
+      // console.log(`Successfully fetched ${agents.length} agents`);
   
       // Fetch processor reports for the given month/year
-      console.log(`Fetching processor reports for Organization: ${organizationID}, Month-Year: ${monthYear}`);
+      // console.log(`Fetching processor reports for Organization: ${organizationID}, Month-Year: ${monthYear}`);
       const processorReports = await ReportsV2M.getProcessorReportsByMonth(organizationID, monthYear);
-      console.log('Processor Reports:', processorReports);
+      // console.log('Processor Reports:', processorReports);
       if (!processorReports || processorReports.length === 0) {
         console.error(`No processor reports found for Organization: ${organizationID}, Month-Year: ${monthYear}`);
         throw new Error('No processor reports found for this month/year.');
       }
-      console.log(`Successfully fetched ${processorReports.length} processor reports`);
+      // console.log(`Successfully fetched ${processorReports.length} processor reports`);
   
       // Build the agent summary report
-      console.log(`Building agent summary report for Organization: ${organizationID}, Month-Year: ${monthYear}`);
+      // console.log(`Building agent summary report for Organization: ${organizationID}, Month-Year: ${monthYear}`);
       const agentSummaryReport = AgentSummaryUtil.buildAgentSummaryReport(organizationID, monthYear, agents, processorReports);
-      console.log('Successfully built agent summary report');
+      // console.log('Successfully built agent summary report');
   
       return agentSummaryReport;
     } catch (error) {
@@ -306,7 +306,7 @@ static updateReport = async (reportID, report) => {
       
       const monthYear = body.monthYear;
       const reportData = body.reportData;
-      console.log('Coordinator: Creating Agent Summary Report: ', organizationID, monthYear, reportData);
+      // console.log('Coordinator: Creating Agent Summary Report: ', organizationID, monthYear, reportData);
       const reportExists = await ReportsV2M.agentSummaryReportExists(organizationID, monthYear);
 
       if (reportExists) {
@@ -317,7 +317,7 @@ static updateReport = async (reportID, report) => {
       agentReport.approved = body.approved;
       }
       const result = await ReportsV2M.createReport(agentReport);
-      console.log('Coordinator: Agent Summary Report Result: ', result);
+      // console.log('Coordinator: Agent Summary Report Result: ', result);
       if (result.acknowledged) {
         return result;
       } else {
@@ -354,7 +354,7 @@ static buildProcessorSummaryReport = async (organizationID, monthYear) => {
       // Get a processor summary report
   static getProcessorSummaryReport = async (organizationID, monthYear) => {
     try {
-      console.log('Coordinator: Getting Processor Summary Report: ', organizationID, monthYear);
+      // console.log('Coordinator: Getting Processor Summary Report: ', organizationID, monthYear);
       return await ReportsV2M.getProcessorSummaryReport(organizationID, monthYear);
     } catch (error) {
       throw new Error('Error getting processor summary report: ' + error.message);
@@ -396,9 +396,9 @@ static buildBankSummaryReport = async (organizationID, monthYear) => {
     }
 
     // Use the utility function to build the bank summary report
-    console.log('Building Bank Summary Report');
+    // console.log('Building Bank Summary Report');
     const bankSummaryReport = BankSummaryUtil.buildBankSummaryReport(organizationID, monthYear, reports);
-    console.log('Bank Summary Report:', bankSummaryReport)
+    // console.log('Bank Summary Report:', bankSummaryReport)
     // You can either save the summary report to the database here or return it
     return bankSummaryReport;
 
@@ -411,7 +411,7 @@ static buildBankSummaryReport = async (organizationID, monthYear) => {
       // Get a bank summary report
   static getBankSummaryReport = async (organizationID, monthYear) => {
     try {
-      console.log('Coordinator: Getting Bank Summary Report: ', organizationID, monthYear);
+      // console.log('Coordinator: Getting Bank Summary Report: ', organizationID, monthYear);
       return await ReportsV2M.getBankSummaryReport(organizationID, monthYear);
     } catch (error) {
       throw new Error('Error getting bank summary report: ' + error.message);
@@ -421,7 +421,7 @@ static buildBankSummaryReport = async (organizationID, monthYear) => {
       // Create a bank summary report
   static createBankSummaryReport = async (organizationID, body) => {
     try {
-      console.log('Coordinator: Creating Bank Summary Report: ', organizationID, body);
+      // console.log('Coordinator: Creating Bank Summary Report: ', organizationID, body);
       const monthYear = body.monthYear;
       const reportData = body.reportData;
       const reportExists = await ReportsV2M.bankSummaryReportExists(organizationID, monthYear);
@@ -433,7 +433,7 @@ static buildBankSummaryReport = async (organizationID, monthYear) => {
       bankSummaryReport.approved = body.approved;
       }
       const result = await ReportsV2M.createReport(bankSummaryReport);
-      console.log('Coordinator: Bank Summary Report Result: ', result);
+      // console.log('Coordinator: Bank Summary Report Result: ', result);
       if (result.acknowledged) {
         return result;
       } else {

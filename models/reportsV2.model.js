@@ -182,7 +182,7 @@ export default class ReportsV2M {
 
   static getProcessorSummaryReport = async (organizationID, monthYear) => {
     try {
-      console.log('Model: Getting Processor Summary Report: ', organizationID, monthYear);
+      // console.log('Model: Getting Processor Summary Report: ', organizationID, monthYear);
       const report = await db.dbReports().findOne({ organizationID, type: 'processor summary', month: monthYear });
       console.log('Processor Summary Report:', report);
       return report;
@@ -211,7 +211,7 @@ export default class ReportsV2M {
     try {
       console.log('Model: Getting Bank Summary Report: ', organizationID, monthYear);
       const report = await db.dbReports().findOne({ organizationID, type: 'bank summary', month: monthYear });
-      console.log('Bank Summary Report:', report);
+      // console.log('Bank Summary Report:', report);
       return report;
     } catch (error) {
       throw new Error('Error getting bank summary report: ' + error.message);
