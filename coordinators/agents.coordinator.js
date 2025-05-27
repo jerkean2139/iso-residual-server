@@ -162,4 +162,16 @@ export default class AgentsCoordinator {
             throw error;
         }
     };
+
+    static getMerchantByID = async (organizationID, merchantID) => {
+        try {
+            const result = await AgentsModel.getMerchantByID(organizationID, merchantID);
+            if (result.message) {
+                return { success: false, message: result.message };
+            }
+            return { success: true, data: result };
+        } catch (error) {
+            throw error;
+        }
+    };
 }

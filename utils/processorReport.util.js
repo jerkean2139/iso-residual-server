@@ -102,11 +102,9 @@ const buildProcRows = async (processor, csvData, branchIDMap, organizationID) =>
                 return; // Skip invalid or unnecessary rows
             };
 
-
             // Determine if Merchant ID exists in branchIDMap
             needsAudit = !branchIDMap.hasOwnProperty(merchantID);
 
-            // console.log('looking for merchantID:', merchantID, 'in branchIDMap:', branchIDMap);
             // Assign default values for missing BranchID
             if (!branchIDMap[merchantID] || !branchIDMap[merchantID].branchID) {
                 branchID = '';
@@ -115,6 +113,9 @@ const buildProcRows = async (processor, csvData, branchIDMap, organizationID) =>
                 branchID = branchIDMap[merchantID].branchID;
                 bankSplit = 0.35;
             };
+
+            // Get splits from the row if they exist
+            const splits = row.splits || [];
 
             switch (processorType) {
                 case 'type1':
@@ -129,7 +130,8 @@ const buildProcRows = async (processor, csvData, branchIDMap, organizationID) =>
                         row['BPS'],
                         bankSplit,
                         branchID, // Ensure branchIDMap is correctly mapped
-                        needsAudit
+                        needsAudit,
+                        splits
                     );
                     break;
                 case 'type2':
@@ -143,7 +145,8 @@ const buildProcRows = async (processor, csvData, branchIDMap, organizationID) =>
                         row['Reject Amount'],      // Correctly named
                         bankSplit,
                         branchID,  // Mapping the correct Merchant ID to branchID
-                        needsAudit
+                        needsAudit,
+                        splits
                     );
                     break;
                 case 'type3':
@@ -155,7 +158,8 @@ const buildProcRows = async (processor, csvData, branchIDMap, organizationID) =>
                         row['Sale Count'],
                         bankSplit,
                         branchID,
-                        needsAudit
+                        needsAudit,
+                        splits
                     );
                     break;
                 case 'type4':
@@ -171,7 +175,8 @@ const buildProcRows = async (processor, csvData, branchIDMap, organizationID) =>
                             row['Billing Amount'],
                             bankSplit,
                             branchID,
-                            needsAudit
+                            needsAudit,
+                            splits
                         );
                     } else {
                         if (merchantID === 'Totals') {
@@ -185,20 +190,20 @@ const buildProcRows = async (processor, csvData, branchIDMap, organizationID) =>
                             row['TOTAL FEES'],
                             bankSplit,
                             branchID,
-                            needsAudit
+                            needsAudit,
+                            splits
                         );
                     };
                     break;
                 default:
                     throw new Error('Processor type not found');
             };
-            //console.log('Processor Row:', procRow);
             procRowsArray.push(procRow);
         });
         return procRowsArray;
     } catch (error) {
-        throw new Error('Error building ProcRows: ' + error.message);
-    };
+        throw new Error('Error building processor rows: ' + error.message);
+    }
 };
 
 const buildBranchIDMap = async (agents) => {

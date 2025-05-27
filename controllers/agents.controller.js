@@ -80,7 +80,6 @@ export const reauditAgents = async (req, res, next) => {
     }
 };
 
-
 export const getAgent = async (req, res, next) => {
     try {
         const result = await AgentsCoordinator.getAgent(req.params.organizationID, req.params.agentID);
@@ -127,6 +126,19 @@ export const deleteAgent = async (req, res, next) => {
             return res.status(400).send(result);
         } else {
             return res.status(204).send(); // Send 204 No Content for successful deletion
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getMerchantByID = async (req, res, next) => {
+    try {
+        const result = await AgentsCoordinator.getMerchantByID(req.params.organizationID, req.params.merchantID);
+        if (!result.success) {
+            return res.status(404).send(result);
+        } else {
+            return res.status(200).send(result);
         }
     } catch (error) {
         next(error);

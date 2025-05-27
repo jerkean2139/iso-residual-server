@@ -80,4 +80,68 @@ export default class AgentsModel {
             throw error;
         }
     };
+
+    static getMerchantByID = async (organizationID, merchantID) => {
+        try {
+            const agent = await db.dbAgents().findOne(
+                { 
+                    organizationID,
+                    'clients.merchantID': merchantID 
+                },
+                { 
+                    projection: {
+                        'clients.$': 1,
+                        fName: 1,
+                        lName: 1,
+                        agentID: 1,
+                        company: 1,
+                        manager: 1,
+                        agentSplit: 1,
+                        managerSplit: 1
+                    }
+                }
+            );
+            
+            if (!agent) {
+                return { message: `No merchant found with ID ${merchantID}` };
+            }
+
+            // Get the matching client from the clients array
+            const merchant = agent.clients.find(client => client.merchantID === merchantID);
+            
+            // Transform merchant data if agentSplit exists
+            let transformedMerchant = { ...merchant };
+            if (merchant.agentSplit) {
+                transformedMerchant = {
+                    merchantID: merchant.merchantID,
+                    merchantName: merchant.merchantName,
+                    branchID: merchant.branchID,
+                    agent: [{
+                        name: `${agent.fName} ${agent.lName}`,
+                        split: merchant.agentSplit
+                    }]
+                };
+
+                // Add other existing properties
+                if (merchant.partners) transformedMerchant.partners = merchant.partners;
+                if (merchant.reps) transformedMerchant.reps = merchant.reps;
+                if (merchant.totalRepsSplitCount) transformedMerchant.totalRepsSplitCount = merchant.totalRepsSplitCount;
+            }
+            
+            return {
+                merchant: transformedMerchant,
+                agent: {
+                    fName: agent.fName,
+                    lName: agent.lName,
+                    agentID: agent.agentID,
+                    company: agent.company,
+                    manager: agent.manager,
+                    managerSplit: agent.managerSplit,
+                    agentSplit: agent.agentSplit
+                }
+            };
+        } catch (error) {
+            throw error;
+        }
+    };
 }
