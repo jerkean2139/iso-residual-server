@@ -13,7 +13,7 @@ export default class DashboardCoordinator {
 
   static async getNeedsApproval(organizationID) {
     try {
-      console.log('Getting reports needing approval for organization:', organizationID);
+      // console.log('Getting reports needing approval for organization:', organizationID);
       // Fetch agents and reports from their coordinators
       const agentsResponse = await AgentsCoordinator.getAgents(organizationID);
       const reportsResponse = await ReportsV2Coor.getReports(organizationID);
@@ -24,7 +24,7 @@ export default class DashboardCoordinator {
       const filteredReports = reports.filter(
         report => !(report.type === 'agent' && report.approved)
       );
-      console.log('Filtered reports:', filteredReports);
+      // console.log('Filtered reports:', filteredReports);
 
       // Identify unapproved or partially approved agent reports
       const unapprovedAgentReports = filteredReports.filter(report =>
@@ -53,14 +53,14 @@ export default class DashboardCoordinator {
         approved: false
       }));
 
-      console.log('Agents without reports:', agentsWithoutReports);
+      // console.log('Agents without reports:', agentsWithoutReports);
       const { month, year } = this.getPreviousMonthAndYear();
       const finalAgentsWithoutReports = [];
       for (const agent of agentsWithoutReports) {
         try {
           // Build the agent report for the given month/year.
           const generatedReport = await ReportsV2Coor.buildAgentReport(organizationID, agent.agentID, `${month} ${year}`);
-          console.log(`Built report for agent ${agent.agentID}:`, generatedReport);
+         
           // If build succeeds, add the agent to the approval list.
           finalAgentsWithoutReports.push(agent);
         } catch (error) {
@@ -81,7 +81,7 @@ export default class DashboardCoordinator {
         let agentSummaryPlaceholder = null;
         try {
           const builtAgentSummary = await ReportsV2Coor.buildAgentSummaryReport(organizationID, `${month} ${year}`);
-          console.log("Built agent summary report:", builtAgentSummary);
+          // console.log("Built agent summary report:", builtAgentSummary);
           if (!builtAgentSummary.approved) {
             agentSummaryPlaceholder = {
               processor: 'Agent Summary',
@@ -115,7 +115,7 @@ export default class DashboardCoordinator {
         let processorSummaryPlaceholder = null;
         try {
           const builtProcessorSummary = await ReportsV2Coor.buildProcessorSummaryReport(organizationID, `${month} ${year}`);
-          console.log("Built processor summary report:", builtProcessorSummary);
+          // console.log("Built processor summary report:", builtProcessorSummary);
           if (!builtProcessorSummary.approved) {
             processorSummaryPlaceholder = {
               processor: 'Processor Summary',
@@ -146,7 +146,7 @@ export default class DashboardCoordinator {
         let bankSummaryPlaceholder = null;
         try {
           const builtBankSummary = await ReportsV2Coor.buildBankSummaryReport(organizationID, `${month} ${year}`);
-          console.log("Built bank summary report:", builtBankSummary);
+          // console.log("Built bank summary report:", builtBankSummary);
           if (!builtBankSummary.approved) {
             bankSummaryPlaceholder = {
               processor: 'Bank Summary',

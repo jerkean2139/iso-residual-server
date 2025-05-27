@@ -6,7 +6,8 @@ import {
     getAgents,
     updateAgent,
     deleteAgent,
-    reauditAgents // Import the new controller function
+    reauditAgents,
+    getMerchantByID,
 } from '../controllers/agents.controller.js';
 import multer from 'multer';
 
@@ -46,6 +47,6 @@ agentsRoute.patch('/organizations/:organizationID/:agentID', updateAgent);
 agentsRoute.delete('/organizations/:organizationID/:agentID', deleteAgent);
 agentsRoute.post('/organizations/:organizationID', createAgent);
 agentsRoute.get('/organizations/:organizationID', getAgents);
-
+agentsRoute.get('/organizations/:organizationID/merchants/:merchantID', getMerchantByID);
 
 export default agentsRoute;
