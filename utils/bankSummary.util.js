@@ -14,6 +14,7 @@ export default class BankSummaryReportUtil {
 
             // Build report
             const bankReport = new Report(organizationID, '', 'bank summary', monthYear, reportData);
+            console.log('bankReport bankReport',bankReport);
 
             return bankReport;
         } catch (error) {

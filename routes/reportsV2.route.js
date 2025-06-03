@@ -94,6 +94,8 @@ reportR.get('/:reportID', ReportsV2Con.getReport);
 reportR.delete('/:reportID', ReportsV2Con.deleteReport);
     // update a report
 reportR.put('/:reportID', ReportsV2Con.updateReport);
+    // update merchant data by ID
+reportR.put('/merchant/:merchantId', ReportsV2Con.updateMerchantDataByID);
 
 // Multer error handling middleware
 reportR.use((err, req, res, next) => {

@@ -139,6 +139,34 @@ static updateReport = async (req, res, next) => {
   }
 };
 
+  // Update merchant data by ID, month, organization, and processor
+  static updateMerchantDataByID = async (req, res) => {
+    try {
+      const { merchantId } = req.params;
+      const { merchantData, monthYear, organizationID, processor } = req.body;
+
+      // console.log('merchantId',merchantId);
+      // console.log('req.body',req.body);
+      // return false;
+
+      if (!monthYear || !organizationID || !processor) {
+        return res.status(400).json({ 
+          error: 'monthYear, organizationID, and processor are required in request body' 
+        });
+      }
+
+      const updatedReports = await ReportsV2Coor.updateMerchantDataByID(
+        merchantId, 
+        merchantData, 
+        monthYear, 
+        organizationID,
+        processor
+      );
+      res.json(updatedReports);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
   // Agent Report functions
     // Build agent report
@@ -295,6 +323,8 @@ static updateReport = async (req, res, next) => {
   // Processor Summary Report functions
     // Build processor summary report
     static buildBankSummaryReport = async (req, res, next) => {
+      // console.log(req.body);
+      // return false;
       try {
         console.log('Building Bank Report: ', req.params.organizationID, req.body.monthYear);
         const processorReport = await ReportsV2Coor.buildBankSummaryReport(req.params.organizationID,req.body.monthYear);
