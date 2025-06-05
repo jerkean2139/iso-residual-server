@@ -49,33 +49,59 @@ export default class ReportsV2Coor {
   };
 
   // Update a report in the coordinator
-  static updateReport = async (reportID, report) => {
+  static updateReport = async (reportID, reportData) => {
     try {
-      // Log the initiation of the update process with context
-      // console.log(`Coordinator: Initiating update for reportID: ${reportID}`, { reportID, report });
+      return await ReportsV2M.updateReport(reportID, reportData);
+    } catch (error) {
+      throw new Error('Error updating report: ' + error.message);
+    }
+  };
 
-      // Call the model to update the report
-      const updatedReport = await ReportsV2M.updateReport(reportID, report);
+  // Update a specific merchant's data within a report
+  static updateMerchantData = async (reportID, merchantId, merchantData) => {
+    try {
+      // Validate required fields
+      if (!reportID || !merchantId || !merchantData) {
+        throw new Error('Missing required fields: reportID, merchantId, and merchantData are required');
+      }
 
-      // Log successful update
-      // console.log(`Coordinator: Successfully updated report with reportID: ${reportID}`);
+      // Ensure merchantData is an object
+      if (typeof merchantData !== 'object') {
+        throw new Error('merchantData must be an object');
+      }
 
+      // Update the merchant data
+      const updatedReport = await ReportsV2M.updateMerchantData(reportID, merchantId, merchantData);
       return updatedReport;
     } catch (error) {
-      // Log the error with additional context
-      console.error(
-        `Coordinator: Failed to update report with reportID: ${reportID}`,
-        {
-          reportID,
-          report,
-          error: error.message,
-        }
-      );
+      throw new Error('Error updating merchant data: ' + error.message);
+    }
+  };
 
-      // Throw a descriptive error message
-      throw new Error(
-        `Coordinator: Error updating report with reportID: ${reportID} - ${error.message}`
+  // Update merchant data by ID, month, organization, and processor
+  static updateMerchantDataByID = async (merchantId, merchantData, monthYear, organizationID, processor) => {
+    try {
+      // Validate required fields
+      if (!merchantId || !merchantData || !monthYear || !organizationID || !processor) {
+        throw new Error('Missing required fields: merchantId, merchantData, monthYear, organizationID, and processor are required');
+      }
+
+      // Ensure merchantData is an object
+      if (typeof merchantData !== 'object') {
+        throw new Error('merchantData must be an object');
+      }
+
+      // Update the merchant data in all relevant reports for the specified month, organization, and processor
+      const updatedReports = await ReportsV2M.updateMerchantDataByID(
+        merchantId, 
+        merchantData, 
+        monthYear, 
+        organizationID,
+        processor
       );
+      return updatedReports;
+    } catch (error) {
+      throw new Error('Error updating merchant data: ' + error.message);
     }
   };
 
@@ -96,7 +122,6 @@ export default class ReportsV2Coor {
 
       console.log("csvData_create_ar_report", csvData);
 
-      //ashish singh
       if (!csvData || csvData.length === 0) {
         throw new Error("Parsed data is empty. Please check the input file.");
       }

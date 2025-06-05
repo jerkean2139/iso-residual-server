@@ -51,10 +51,9 @@ export default class ReportsV2M {
   // Update a report
   static updateReport = async (reportID, reportData) => {
     try {
-      console.log("Model: Incoming report for update:", reportData);
-
       // Attempt to update the report
       const updatedReport = await db.dbReports().replaceOne({ reportID }, reportData);
+      console.log('reportID',reportID);
 
       // Check if a report was matched and modified
       if (!updatedReport.matchedCount) {
@@ -270,6 +269,116 @@ export default class ReportsV2M {
       return !!existingReport; // Return true if a report exists, false otherwise
     } catch (error) {
       throw new Error('Error checking if report exists: ' + error.message);
+    }
+  };
+
+  // Update a specific merchant's data within a report
+  static updateMerchantData = async (reportID, merchantId, merchantData) => {
+    try {
+      // Find the report first
+      const report = await db.dbReports().findOne({ reportID });
+      if (!report) {
+        throw new Error(`No report found with reportID: ${reportID}`);
+      }
+
+      // Find the merchant in reportData
+      const merchantIndex = report.reportData.findIndex(
+        merchant => merchant['Merchant Id'] === merchantId
+      );
+
+      if (merchantIndex === -1) {
+        throw new Error(`No merchant found with ID: ${merchantId}`);
+      }
+
+      // Update the merchant data
+      const updatedReport = await db.dbReports().updateOne(
+        { reportID },
+        { 
+          $set: { 
+            [`reportData.${merchantIndex}`]: {
+              ...report.reportData[merchantIndex],
+              ...merchantData
+            }
+          }
+        }
+      );
+
+      if (!updatedReport.modifiedCount) {
+        throw new Error('Failed to update merchant data');
+      }
+
+      return await db.dbReports().findOne({ reportID });
+    } catch (error) {
+      throw new Error(`Error updating merchant data: ${error.message}`);
+    }
+  };
+
+  // Update merchant data by ID, month, organization, and processor
+  static updateMerchantDataByID = async (merchantId, merchantData, monthYear, organizationID, processor) => {
+    try {
+
+      console.log('merchantId',merchantId)
+      console.log('merchantData',merchantData)
+      console.log('monthYear',monthYear)
+      console.log('organizationID',organizationID)
+      console.log('processor',processor)
+      // Find reports for the specific month, organization, and processor that contain this merchant
+      const reports = await db.dbReports().find({
+        organizationID,
+        month: monthYear,
+        processor,
+        'reportData': {
+          $elemMatch: {
+            'Merchant Id': merchantId
+          }
+        }
+      }).toArray();
+
+      if (!reports || reports.length === 0) {
+        // Try a more lenient search to debug
+        const allReports = await db.dbReports().find({
+          organizationID,
+          month: monthYear,
+          processor
+        }).toArray();
+        
+        console.log('All Reports for Month/Org/Processor:', JSON.stringify(allReports, null, 2));
+        allReports.forEach(report => {
+          if (Array.isArray(report.reportData)) {
+            report.reportData.forEach(row => {
+              console.log('[DEBUG] (All) DB Merchant Id:', row['Merchant Id'], '| Type:', typeof row['Merchant Id'], '| Length:', row['Merchant Id'] ? row['Merchant Id'].length : 'undefined');
+            });
+          }
+        });
+        console.log('[DEBUG] (All) Query Merchant Id:', merchantId, '| Type:', typeof merchantId, '| Length:', merchantId.length);
+        throw new Error(`No merchant found with ID: ${merchantId} for month: ${monthYear} in organization: ${organizationID} and processor: ${processor}`);
+      }
+
+      // Update each report that contains this merchant
+      const updatePromises = reports.map(async (report) => {
+        const merchantIndex = report.reportData.findIndex(
+          merchant => merchant['Merchant Id'] === merchantId
+        );
+
+        if (merchantIndex !== -1) {
+          return db.dbReports().updateOne(
+            { _id: report._id },
+            {
+              $set: {
+                [`reportData.${merchantIndex}`]: {
+                  ...report.reportData[merchantIndex],
+                  ...merchantData
+                }
+              }
+            }
+          );
+        }
+      });
+
+      await Promise.all(updatePromises.filter(Boolean));
+      return reports;
+    } catch (error) {
+      throw new Error(`Error updating merchant data: ${error.message}`);
     }
   };
 

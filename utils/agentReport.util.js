@@ -153,6 +153,8 @@ const buildProcessorReportData = (report, agent) => {
             "Agent Split": convertToPercentage(agentSplit),
             "Agent Net": row["Net"] * agentSplit,
             "Branch ID": branchID,
+            splits: row.splits || [],
+            approved: row.approved || false
           };
           break;
 
@@ -168,6 +170,8 @@ const buildProcessorReportData = (report, agent) => {
             "Agent Split": convertToPercentage(agentSplit),
             "Agent Net": row["Payout Amount"] * agentSplit,
             "Branch ID": branchID,
+            splits: row.splits || [],
+            approved: row.approved || false
           };
           break;
 
@@ -181,6 +185,8 @@ const buildProcessorReportData = (report, agent) => {
             "Agent Split": convertToPercentage(agentSplit),
             "Agent Net": row["Payout Amount"] * agentSplit,
             "Branch ID": branchID,
+            splits: row.splits || [],
+            approved: row.approved || false
           };
           break;
 
@@ -192,8 +198,9 @@ const buildProcessorReportData = (report, agent) => {
             "Agent Split": convertToPercentage(agentSplit),
             "Agent Net": row["Net"] * agentSplit,
             "Branch ID": branchID,
+            splits: row.splits || [],
+            approved: row.approved || false
           };
-
           break;
       }
 
