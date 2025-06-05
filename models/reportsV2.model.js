@@ -317,6 +317,11 @@ export default class ReportsV2M {
   static updateMerchantDataByID = async (merchantId, merchantData, monthYear, organizationID, processor) => {
     try {
 
+      console.log('merchantId',merchantId)
+      console.log('merchantData',merchantData)
+      console.log('monthYear',monthYear)
+      console.log('organizationID',organizationID)
+      console.log('processor',processor)
       // Find reports for the specific month, organization, and processor that contain this merchant
       const reports = await db.dbReports().find({
         organizationID,
