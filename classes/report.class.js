@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 export default class Report {
-  constructor(organizationID, processor, type, month, reportData, splits = []) {
+  constructor(organizationID, processor, type, month, reportData, splits = [], userID = null) {
     this.reportID = `report-${uuid().slice(-8)}`;
     this.organizationID = organizationID;
     this.processor = processor;
@@ -10,6 +10,7 @@ export default class Report {
     this.processors = []; 
     this.approved = false;
     this.splits = splits;
+    this.userID = userID;
   }
 
   updateReport(data) {

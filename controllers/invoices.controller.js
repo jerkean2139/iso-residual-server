@@ -4,9 +4,9 @@ export default class InvoicesController {
     static getInvoiceNum = async (req, res, next) => {
         try {
             const organizationID = req.params.organizationID;
-            console.log('organizationID: ' + organizationID);
+            // console.log('organizationID: ' + organizationID);
             const result = await InvoicesCoordinator.getInvoiceNum(organizationID);
-            console.log('result: ', result);
+            // console.log('result: ', result);
             if (result) {
                 res.status(200).json(result);
             } else {

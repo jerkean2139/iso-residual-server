@@ -125,10 +125,10 @@ export default class ReportsCoor {
       let csvData;
       
       if (mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        console.log("Parsing XLSX file");
+        // console.log("Parsing XLSX file");
         csvData = await this.parseXLSX(fileBuffer); // Parse the XLSX data directly from the buffer
       } else if (mimetype === 'text/csv' || mimetype === 'application/csv') {
-        console.log("Parsing CSV file");
+        // console.log("Parsing CSV file");
         csvData = await this.parseCSV(fileBuffer); // Parse the CSV data directly from the buffer
       } else {
         throw new Error('Unsupported file type: ' + mimetype);
@@ -150,7 +150,7 @@ export default class ReportsCoor {
       }
 
       if (!csvData[0].Month && processor === 'PAAY') {
-        console.log("PAAY Report");
+        // console.log("PAAY Report");
         type = 'billing';
         let rowIndex = 0;
         csvData.forEach(row => {
@@ -158,7 +158,7 @@ export default class ReportsCoor {
             csvData[rowIndex].Total = total;
           rowIndex++;
         });
-        console.log(csvData);
+        // console.log(csvData);
         billReport = await this.updateBillReport(arReport, csvData);
         report = new Report(
           organizationID,
@@ -169,7 +169,7 @@ export default class ReportsCoor {
         );
         //console.log("Created report object:", report);
       } else {
-        console.log("Accept.Blue Report");
+        // console.log("Accept.Blue Report");
         type = 'billing';
         formattedMonthYear = csvData[0].Month; // Assuming Month is already formatted in the CSV
         billReport = await this.buildBillReport(organizationID, processor, type, csvData);

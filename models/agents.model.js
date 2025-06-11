@@ -144,4 +144,19 @@ export default class AgentsModel {
             throw error;
         }
     };
+
+    static getAgentByUserId = async (organizationID, userId) => {
+        try {
+            const agent = await db.dbAgents().findOne(
+                { 
+                    organizationID,
+                    user_id: userId 
+                },
+                { projection: Constants.DEFAULT_PROJECTION }
+            );
+            return agent;
+        } catch (error) {
+            throw error;
+        }
+    };
 }

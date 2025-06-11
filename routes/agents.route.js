@@ -8,6 +8,7 @@ import {
     deleteAgent,
     reauditAgents,
     getMerchantByID,
+    getAgentByUserId,
 } from '../controllers/agents.controller.js';
 import multer from 'multer';
 
@@ -34,7 +35,7 @@ const upload = multer({
 
 // Logging middleware
 agentsRoute.use((req, res, next) => {
-    console.log(`Request received for path: ${req.path}`);
+    // console.log(`Request received for path: ${req.path}`);
     next();
 });
 
@@ -48,5 +49,6 @@ agentsRoute.delete('/organizations/:organizationID/:agentID', deleteAgent);
 agentsRoute.post('/organizations/:organizationID', createAgent);
 agentsRoute.get('/organizations/:organizationID', getAgents);
 agentsRoute.get('/organizations/:organizationID/merchants/:merchantID', getMerchantByID);
+agentsRoute.get('/organizations/:organizationID/user/:userId', getAgentByUserId);
 
 export default agentsRoute;

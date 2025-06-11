@@ -7,9 +7,31 @@ export default class AgentsCoordinator {
 
     static createAgent = async (organizationID, agent) => {
         try {
-            const newAgent = new Agent(organizationID, agent.fName, agent.lName, agent.clients);
-            const result = await AgentsModel.createAgent(newAgent);
+            // If user_id is provided, check if agent with this user_id already exists
+            if (agent.user_id) {
+                const existingAgent = await AgentsModel.getAgentByUserId(organizationID, agent.user_id);
+                if (existingAgent) {
+                    return { 
+                        acknowledged: false, 
+                        message: "Agent with this user_id already exists",
+                        existingAgent 
+                    };
+                }
+            }
+
+            // Create new agent
+            const newAgent = new Agent(
+                organizationID, 
+                agent.fName, 
+                agent.lName, 
+                agent.clients,
+                agent.company,
+                agent.manager,
+                agent.additional_splits,
+                agent.user_id  // Add user_id if provided
+            );
             
+            const result = await AgentsModel.createAgent(newAgent);
             return { ...result, agentID: newAgent.agentID };
         } catch (error) {
             throw error;
@@ -170,6 +192,24 @@ export default class AgentsCoordinator {
                 return { success: false, message: result.message };
             }
             return { success: true, data: result };
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    static getAgentByUserId = async (organizationID, userId) => {
+        try {
+            const agent = await AgentsModel.getAgentByUserId(organizationID, userId);
+            if (!agent) {
+                return {
+                    acknowledged: false,
+                    message: "Agent not found with the given user_id"
+                };
+            }
+            return {
+                acknowledged: true,
+                agent
+            };
         } catch (error) {
             throw error;
         }

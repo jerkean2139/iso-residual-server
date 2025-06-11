@@ -53,7 +53,7 @@ export default class ReportsV2M {
     try {
       // Attempt to update the report
       const updatedReport = await db.dbReports().replaceOne({ reportID }, reportData);
-      console.log('reportID',reportID);
+      // console.log('reportID',reportID);
 
       // Check if a report was matched and modified
       if (!updatedReport.matchedCount) {
@@ -235,7 +235,7 @@ export default class ReportsV2M {
     try {
       console.log('Model: Getting Agent Summary Report: ', organizationID, monthYear);
       const report = await db.dbReports().findOne({ organizationID, type: 'agent summary', month: monthYear });
-      console.log('Agent Summary Report:', report);
+      // console.log('Agent Summary Report:', report);
       return report;
     } catch (error) {
       throw new Error('Error getting agent summary report: ' + error.message);
@@ -317,11 +317,11 @@ export default class ReportsV2M {
   static updateMerchantDataByID = async (merchantId, merchantData, monthYear, organizationID, processor) => {
     try {
 
-      console.log('merchantId',merchantId)
-      console.log('merchantData',merchantData)
-      console.log('monthYear',monthYear)
-      console.log('organizationID',organizationID)
-      console.log('processor',processor)
+      // console.log('merchantId',merchantId)
+      // console.log('merchantData',merchantData)
+      // console.log('monthYear',monthYear)
+      // console.log('organizationID',organizationID)
+      // console.log('processor',processor)
       // Find reports for the specific month, organization, and processor that contain this merchant
       const reports = await db.dbReports().find({
         organizationID,
@@ -342,15 +342,15 @@ export default class ReportsV2M {
           processor
         }).toArray();
         
-        console.log('All Reports for Month/Org/Processor:', JSON.stringify(allReports, null, 2));
+        // console.log('All Reports for Month/Org/Processor:', JSON.stringify(allReports, null, 2));
         allReports.forEach(report => {
           if (Array.isArray(report.reportData)) {
             report.reportData.forEach(row => {
-              console.log('[DEBUG] (All) DB Merchant Id:', row['Merchant Id'], '| Type:', typeof row['Merchant Id'], '| Length:', row['Merchant Id'] ? row['Merchant Id'].length : 'undefined');
+              // console.log('[DEBUG] (All) DB Merchant Id:', row['Merchant Id'], '| Type:', typeof row['Merchant Id'], '| Length:', row['Merchant Id'] ? row['Merchant Id'].length : 'undefined');
             });
           }
         });
-        console.log('[DEBUG] (All) Query Merchant Id:', merchantId, '| Type:', typeof merchantId, '| Length:', merchantId.length);
+        // console.log('[DEBUG] (All) Query Merchant Id:', merchantId, '| Type:', typeof merchantId, '| Length:', merchantId.length);
         throw new Error(`No merchant found with ID: ${merchantId} for month: ${monthYear} in organization: ${organizationID} and processor: ${processor}`);
       }
 
