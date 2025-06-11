@@ -112,7 +112,8 @@ export default class ReportsV2Coor {
     processor,
     fileBuffer,
     mimetype,
-    monthYear
+    monthYear,
+    userID
   ) => {
     try {
       const reports = [];
@@ -120,7 +121,7 @@ export default class ReportsV2Coor {
       // Parse the file
       const csvData = await parseFile(fileBuffer, mimetype, processor);
 
-      console.log("csvData_create_ar_report", csvData);
+      // console.log("csvData_create_ar_report", csvData);
 
       if (!csvData || csvData.length === 0) {
         throw new Error("Parsed data is empty. Please check the input file.");
@@ -161,6 +162,11 @@ export default class ReportsV2Coor {
         enrichedCSVData
       );
 
+      // Add userID to billing report if provided
+      if (userID) {
+        billingReport.userID = userID;
+      }
+
       reports.push(billingReport);
       // Check if an AR report already exists for this month and organization
       const arReport = await ReportsV2M.getARReport(organizationID, monthYear);
@@ -177,6 +183,10 @@ export default class ReportsV2Coor {
         );
         const updatedReport = result.arReport;
         const updatedInvoiceCount = result.invoiceCount;
+        // Add userID to updated report if provided
+        if (userID) {
+          updatedReport.userID = userID;
+        }
         await ReportsV2M.updateReport(updatedReport.reportID, updatedReport);
         await InvoicesModel.updateInvoiceNum(
           organizationID,
@@ -194,6 +204,10 @@ export default class ReportsV2Coor {
         );
         const newReport = result.arReport;
         const newInvoiceCount = result.invoiceCount;
+        // Add userID to new report if provided
+        if (userID) {
+          newReport.userID = userID;
+        }
         await InvoicesModel.updateInvoiceNum(organizationID, newInvoiceCount);
         reports.push(newReport);
       }
@@ -305,13 +319,14 @@ export default class ReportsV2Coor {
     processor,
     fileBuffer,
     mimetype,
-    monthYear
+    monthYear,
+    userID
   ) => {
     try {
       // Parse the file
       const csvData = await parseFile(fileBuffer, mimetype, processor);
 
-      console.log("csvData", csvData);
+      // console.log("csvData", csvData);
 
       const agents = await AgentsModel.getAgents(organizationID);
       if (!csvData || csvData.length === 0) {
@@ -324,7 +339,7 @@ export default class ReportsV2Coor {
         organizationID
       );
 
-      console.log("enrichedCSVData", enrichedCSVData);
+      // console.log("enrichedCSVData", enrichedCSVData);
 
       // Check if a report already exists for this organization, processor, type, and month/year
       let reportExists;
@@ -355,6 +370,10 @@ export default class ReportsV2Coor {
             agents,
             enrichedCSVData
           );
+          // Add userID to updated report if provided
+          if (userID) {
+            updatedReport.userID = userID;
+          }
           // Update the report in the database
           const result = await ReportsV2M.updateReport(
             report.reportID,
@@ -373,6 +392,10 @@ export default class ReportsV2Coor {
             agents,
             enrichedCSVData
           );
+          // Add userID to new report if provided
+          if (userID) {
+            report.userID = userID;
+          }
           // Create the report in the database
           const result = await ReportsV2M.createReport(report);
           // Check if the report was created successfully
@@ -404,6 +427,10 @@ export default class ReportsV2Coor {
         agents,
         enrichedCSVData
       );
+      // Add userID to report if provided
+      if (userID) {
+        report.userID = userID;
+      }
       // Create the report in the database
       const result = await ReportsV2M.createReport(report);
       // Check if the report was created successfully

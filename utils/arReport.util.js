@@ -8,13 +8,13 @@ export default class ArReportUtil {
       let report;
       if (processor === 'PAAY') {
         // Filter out rows without a MID
-        console.log('Filtering out rows without a MID');
+        // console.log('Filtering out rows without a MID');
         const filteredData = csvData.filter(row => row['MID']);
-        console.log('Filtered row count:', filteredData.length);
+        // console.log('Filtered row count:', filteredData.length);
         filteredData.forEach(row => {
           delete row[''];
           row.Total = Number(row.Total);
-          console.log('row:', row);
+          // console.log('row:', row);
         });
         report = new Report(
           organizationID,
@@ -138,7 +138,7 @@ const abBuildARData = async (invoiceCount, csvData, monthYear) => {
     };
 
     const dueDate = addOneMonth(monthYear);
-    console.log('dueDate:', dueDate);
+    // console.log('dueDate:', dueDate);
 
     csvData.forEach(row => {
       if (!row.Month) {
@@ -146,7 +146,7 @@ const abBuildARData = async (invoiceCount, csvData, monthYear) => {
       }
       Object.keys(row).forEach(key => {
         if (keyMappings[key]) {
-          console.log('key:', row[key]);
+          // console.log('key:', row[key]);
           if (row[key] === '$0.00') {
             return; // Skip zero amounts
           }

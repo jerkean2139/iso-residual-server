@@ -8,7 +8,7 @@ export default class AuthCoordinator {
 
     static loginUser = async (username, password) => {
         const user = await AuthM.findUserByUsername(username.toLowerCase());
-        console.log(user);
+        // console.log(user);
         if (!user) throw new Error('User not found');
 
         const isMatch = await bcrypt.compare(password, user.password);

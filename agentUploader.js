@@ -67,7 +67,7 @@ const createAgents = async () => {
 
       // Create the agent using the AgentsCoordinator
       const result = await AgentsCoordinator.createAgent('org-ad0bfbe7', agent);
-      console.log(`Agent ${fName} ${lName} created:`, result);
+      // console.log(`Agent ${fName} ${lName} created:`, result);
     }
   } catch (error) {
     console.error('Error creating agents:', error.message);

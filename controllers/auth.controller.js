@@ -14,6 +14,7 @@ export const login = async (req, res) => {
             username: user.username,
             organization: user.organizationID,
             isAdmin: user.isAdmin,  // Assuming `isAdmin` is a boolean property of `user`
+            email: 'admin@gmail.com'
         };
 
         // Sign the token with the payload
@@ -42,13 +43,15 @@ export const signup = async (req, res) => {
 
 export const generateToken = async (req, res) => {
     try {
-        const { username, roleId } = req.body;
+        const { username, roleId, email , user_id} = req.body;
         // Create the token payload with just username
         const tokenPayload = {
             username: username,
             organization: 'org-86f76df1',
             isAdmin: true,  // Assuming `isAdmin` is a boolean property of `user`
-            roleId: roleId
+            roleId: roleId,
+            email: email,
+            user_id: user_id
         };
 
         // Sign the token with the payload

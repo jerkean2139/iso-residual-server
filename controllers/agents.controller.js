@@ -144,3 +144,15 @@ export const getMerchantByID = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getAgentByUserId = async (req, res, next) => {
+    try {
+        const result = await AgentsCoordinator.getAgentByUserId(req.params.organizationID, req.params.userId);
+        if (!result.acknowledged) {
+            return res.status(404).send(result);
+        }
+        return res.status(200).send(result);
+    } catch (error) {
+        next(error);
+    }
+};

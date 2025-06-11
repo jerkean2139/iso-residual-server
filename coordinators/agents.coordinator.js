@@ -196,4 +196,22 @@ export default class AgentsCoordinator {
             throw error;
         }
     };
+
+    static getAgentByUserId = async (organizationID, userId) => {
+        try {
+            const agent = await AgentsModel.getAgentByUserId(organizationID, userId);
+            if (!agent) {
+                return {
+                    acknowledged: false,
+                    message: "Agent not found with the given user_id"
+                };
+            }
+            return {
+                acknowledged: true,
+                agent
+            };
+        } catch (error) {
+            throw error;
+        }
+    };
 }

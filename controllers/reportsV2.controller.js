@@ -48,6 +48,14 @@ export default class ReportsV2Con {
       const files = req.files;
       const organizationID = req.params.organizationID;
 
+      console.log('req.body',req.body);
+      
+      let userID = null;
+
+      if(req.body.userID){
+         userID = req.body.userID;
+      }
+
       if (!files || Object.keys(files).length === 0) {
         return res.status(400).json({ message: 'No files uploaded' });
       }
@@ -69,10 +77,10 @@ export default class ReportsV2Con {
         let promise;
         if (processor === 'accept.blue' || processor === 'PAAY') {
           // Handle Type 1 processors (accept.blue, PAAY)
-          promise = await ReportsV2Coor.createArReport(organizationID, processor, fileBuffer, mimetype, monthYear);
+          promise = await ReportsV2Coor.createArReport(organizationID, processor, fileBuffer, mimetype, monthYear, userID);
           reportPromises.push(promise);
         } else {
-          promise = await ReportsV2Coor.createProcessorReport(organizationID, processor, fileBuffer, mimetype, monthYear);
+          promise = await ReportsV2Coor.createProcessorReport(organizationID, processor, fileBuffer, mimetype, monthYear, userID);
           reportPromises.push(promise);
         }
       }
@@ -110,9 +118,9 @@ export default class ReportsV2Con {
 static updateReport = async (req, res, next) => {
   try {
       // Log the request details
-      console.log("Reports Controller: Initiating report update");
-      console.log("Report ID:", req.params.reportID);
-      console.log("Report Data:", req.body);
+      // console.log("Reports Controller: Initiating report update");
+      // console.log("Report ID:", req.params.reportID);
+      // console.log("Report Data:", req.body);
 
       // Call the coordinator to update the report
       const report = await ReportsV2Coor.updateReport(req.params.reportID, req.body);
@@ -124,7 +132,7 @@ static updateReport = async (req, res, next) => {
       }
 
       // Log the successful update and respond
-      console.log(`Reports Controller: Successfully updated report with ID: ${req.params.reportID}`);
+      // console.log(`Reports Controller: Successfully updated report with ID: ${req.params.reportID}`);
       return res.status(200).json(report);
   } catch (error) {
       // Log the error with full context
@@ -186,11 +194,11 @@ static updateReport = async (req, res, next) => {
     static getAgentReport = async (req, res, next) => {
       try {
           const monthYear = `${req.params.month} ${req.params.year}`;
-          console.log(`[AgentReport] Fetching report for Month Year: ${monthYear}`);
+          // console.log(`[AgentReport] Fetching report for Month Year: ${monthYear}`);
           const agentReport = await ReportsV2Coor.getAgentReport(req.params.organizationID, req.params.agentID, monthYear);
           
           if (!agentReport || agentReport.length === 0) {
-              console.log(`[AgentReport] No report found for organizationID: ${req.params.organizationID}, agentID: ${req.params.agentID}, monthYear: ${monthYear}`);
+              // console.log(`[AgentReport] No report found for organizationID: ${req.params.organizationID}, agentID: ${req.params.agentID}, monthYear: ${monthYear}`);
               return res.status(204).json({ 
                   message: 'No agent reports found',
                   organizationID: req.params.organizationID,
@@ -225,7 +233,7 @@ static updateReport = async (req, res, next) => {
     // Build processor summary report
   static buildProcessorSummaryReport = async (req, res, next) => {
     try {
-      console.log('Building Processor Report: ', req.params.organizationID, req.body.monthYear);
+      // console.log('Building Processor Report: ', req.params.organizationID, req.body.monthYear);
       const processorReport = await ReportsV2Coor.buildProcessorSummaryReport(req.params.organizationID,req.body.monthYear);
       if (!processorReport) {
         return res.status(404).json({ message: 'Processor report not found' });
@@ -239,7 +247,7 @@ static updateReport = async (req, res, next) => {
       // Create processor summary report
   static createProcessorSummaryReport = async (req, res, next) => {
     try {
-      console.log('Reports Controller: Creating Processor Summary Report');
+      // console.log('Reports Controller: Creating Processor Summary Report');
       const processorReport = await ReportsV2Coor.createProcessorSummaryReport(req.params.organizationID, req.body);
       if (!processorReport.acknowledged) {
         return res.status(404).json({ message: 'Processor report not created' });
@@ -253,12 +261,12 @@ static updateReport = async (req, res, next) => {
       // Get processor summary report
   static getProcessorSummaryReport = async (req, res, next) => {
     try {
-      console.log('Reports Controller: Getting Processor Summary Report');
+      // console.log('Reports Controller: Getting Processor Summary Report');
       const monthYear = `${req.params.month} ${req.params.year}`;
-      console.log('Month Year:', monthYear);
-      console.log('Organization ID:', req.params.organizationID);
+      // console.log('Month Year:', monthYear);
+      // console.log('Organization ID:', req.params.organizationID);
       const processorReport = await ReportsV2Coor.getProcessorSummaryReport(req.params.organizationID, monthYear);
-      console.log('Processor Report:', processorReport);
+      // console.log('Processor Report:', processorReport);
       if (!processorReport || processorReport.length === 0) {
         return res.status(404).json({ message: 'No processor reports found' });
       }
@@ -285,7 +293,7 @@ static updateReport = async (req, res, next) => {
       // Create agent summary report
   static createAgentSummaryReport = async (req, res, next) => {
     try {
-      console.log('Reports Controller: Creating Agent Summary Report', req.params.organizationID, req.body);
+      // console.log('Reports Controller: Creating Agent Summary Report', req.params.organizationID, req.body);
       const agentSummaryReport = await ReportsV2Coor.createAgentSummaryReport(req.params.organizationID, req.body);
       if (!agentSummaryReport.acknowledged) {
         return res.status(404).json({ message: 'Agent summary report not created' });
@@ -300,9 +308,9 @@ static updateReport = async (req, res, next) => {
   static getAgentSummaryReport = async (req, res, next) => {
     try {
       const monthYear = `${req.params.month} ${req.params.year}`;
-      console.log('Month Year:', monthYear);
+      // console.log('Month Year:', monthYear);
       const agentSummaryReport = await ReportsV2Coor.getAgentSummaryReport(req.params.organizationID, monthYear);
-      console.log('Agent Summary Report:', agentSummaryReport);
+      // console.log('Agent Summary Report:', agentSummaryReport);
       if (!agentSummaryReport || agentSummaryReport.length === 0) {
         return res.status(404).json({ message: 'No agent summary reports found' });
       }
@@ -326,7 +334,7 @@ static updateReport = async (req, res, next) => {
       // console.log(req.body);
       // return false;
       try {
-        console.log('Building Bank Report: ', req.params.organizationID, req.body.monthYear);
+        // console.log('Building Bank Report: ', req.params.organizationID, req.body.monthYear);
         const processorReport = await ReportsV2Coor.buildBankSummaryReport(req.params.organizationID,req.body.monthYear);
         if (!processorReport) {
           return res.status(404).json({ message: 'Processor report not found' });
@@ -340,7 +348,7 @@ static updateReport = async (req, res, next) => {
         // Create processor summary report
     static createBankSummaryReport = async (req, res, next) => {
       try {
-        console.log('Reports Controller: Creating Bank Summary Report');
+        // console.log('Reports Controller: Creating Bank Summary Report');
         const processorReport = await ReportsV2Coor.createBankSummaryReport(req.params.organizationID, req.body);
         if (!processorReport.acknowledged) {
           return res.status(404).json({ message: 'Bank report not created' });
@@ -354,12 +362,12 @@ static updateReport = async (req, res, next) => {
         // Get processor summary report
     static getBankSummaryReport = async (req, res, next) => {
       try {
-        console.log('Reports Controller: Getting Bank Summary Report');
+        // console.log('Reports Controller: Getting Bank Summary Report');
         const monthYear = `${req.params.month} ${req.params.year}`;
-        console.log('Month Year:', monthYear);
-        console.log('Organization ID:', req.params.organizationID);
+        // console.log('Month Year:', monthYear);
+        // console.log('Organization ID:', req.params.organizationID);
         const processorReport = await ReportsV2Coor.getBankSummaryReport(req.params.organizationID, monthYear);
-        console.log('Bank Report:', processorReport);
+        // console.log('Bank Report:', processorReport);
         if (!processorReport || processorReport.length === 0) {
           return res.status(204).json({ message: 'No processor reports found' });
         }

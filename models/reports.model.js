@@ -76,7 +76,7 @@ export default class ReportsM {
   static updateReport = async (reportID, reportData) => {
     try {
       const report = await db.dbReports().replaceOne({ reportID }, reportData);
-      console.log('Updated report:', report);
+      // console.log('Updated report:', report);
       return report;
     } catch (error) {
       throw new Error('Error updating report in the DB: ' + error.message);

@@ -73,10 +73,10 @@ export default class ReportsCon {
         promises.forEach(promise => reportPromises.push(promise));
       }
   
-      console.log("Report promises:", reportPromises); // Log the report promises before resolving
+      // console.log("Report promises:", reportPromises); // Log the report promises before resolving
       const reports = await Promise.all(reportPromises);
   
-      console.log("Reports created successfully:", reports); // Log the final created reports
+      // console.log("Reports created successfully:", reports); // Log the final created reports
       res.status(200).json({ message: 'Reports created successfully', reports });
     } catch (error) {
       console.error("Error in createReports:", error.message); // Log the error

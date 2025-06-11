@@ -30,7 +30,7 @@ export default class UsersCoordinator {
             newUser.organizationID = organizationID;
             newUser.status = 'active';
 
-            console.log(newUser);
+            // console.log(newUser);
             // Save the user to the database
             const result = await UsersModel.addUser(newUser);
             if (result.acknowledged) {
