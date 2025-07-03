@@ -30,6 +30,7 @@ export const parseFile = async (buffer, mimetype, processor) => {
         case 'type2':
         case 'type3':
         case 'type4':
+        case 'type5':
           return await parseCSV(buffer);
         case 'type1':
           return await type2CsvParser(buffer);

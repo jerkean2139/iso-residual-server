@@ -6,7 +6,8 @@ const processorColumnMapByType = {
   'type1': ['Merchant Id', 'Merchant Name', 'Transaction', 'Sales Amount', 'Income', 'Expenses', 'Net', 'bps', '%', 'Agent Net', 'Branch ID'],
   'type2': ['Merchant Id', 'Merchant Name', 'Payout Amount', 'Volume', 'Sales', 'Refunds', 'Reject Amount', 'Bank Split', 'Bank Payout', 'Branch ID'],
   'type3': ['Merchant Id', 'Merchant DBA', 'Payout Amount', 'Volume', 'Sales', 'Refunds', 'Reject Amount', 'Bank Split', 'Bank Payout', 'Branch ID'],
-  'type4': ['Merchant Id', 'Merchant Name', 'Income', '', '', 'Expenses', 'Net', '', '%', 'Agent Net', 'Branch ID']
+  'type4': ['Merchant Id', 'Merchant Name', 'Income', '', '', 'Expenses', 'Net', '', '%', 'Agent Net', 'Branch ID'],
+  'type5': ['Merchant Id', 'Merchant Name', 'Transaction', 'Sales Amount', 'Income', 'Expenses', 'Net', 'BPS', '%', 'Agent Net', 'Branch ID']
 };
 
 export default class ProcessorSummaryUtil {
@@ -140,6 +141,16 @@ const calculateTotals = (report, processorType, columns) => {
 
                     case 'type4':
                         // Sum Income, Expenses, Net, and Agent Net for type4 processors
+                        totalIncome += parseFloat(row['Income']) || 0; // Income
+                        totalExpenses += parseFloat(row['Expenses']) || 0; // Expenses
+                        totalNet += parseFloat(row['Net']) || 0; // Net
+                        totalAgentNet += parseFloat(row['Agent Net']) || 0; // Agent Net
+                        break;
+
+                    case 'type5':
+                        // Sum Transactions, Sales Amount, Income, Expenses, Net, and Agent Net for type5 processors (PayBright)
+                        totalTransactions += parseFloat(row['Transaction']) || 0; // Transactions
+                        totalSalesAmount += parseFloat(row['Sales Amount']) || 0; // Sales Amount
                         totalIncome += parseFloat(row['Income']) || 0; // Income
                         totalExpenses += parseFloat(row['Expenses']) || 0; // Expenses
                         totalNet += parseFloat(row['Net']) || 0; // Net

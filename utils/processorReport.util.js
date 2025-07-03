@@ -2,6 +2,7 @@ import Type1Row from "../classes/type1Row.class.js";
 import Type2Row from "../classes/type2Row.class.js";
 import Type3Row from "../classes/type3Row.class.js";
 import Type4Row from "../classes/type4Row.class.js";
+import Type5Row from "../classes/type5Row.class.js";
 import Report from "../classes/report.class.js";
 import processorTypeMap from "../lib/typeMap.lib.js";
 import ReportsV2M from "../models/reportsV2.model.js";
@@ -194,6 +195,21 @@ const buildProcRows = async (processor, csvData, branchIDMap, organizationID) =>
                             splits
                         );
                     };
+                    break;
+                case 'type5':
+                    procRow = new Type5Row(
+                        merchantID,  // trim to handle spaces
+                        merchantName,
+                        row['Transactions'],
+                        row['Sales Amount'],
+                        row['Income'],
+                        row['Expenses'],
+                        row['Net'],
+                        row['BPS'],
+                        bankSplit,
+                        needsAudit,
+                        splits
+                    );
                     break;
                 default:
                     throw new Error('Processor type not found');
