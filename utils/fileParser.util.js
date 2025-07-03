@@ -20,18 +20,19 @@ export const parseFile = async (buffer, mimetype, processor) => {
       };
     };
     
-    switch (type) {
-      case 'billing':
-      case 'type2':
-      case 'type3':
-      case 'type4':
-        if (mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-          return await parseXLSX(buffer);
-        } else if (mimetype === 'text/csv' || mimetype === 'application/csv') {
-          return await parseCSV(buffer);
-        } else {
-          throw new Error('Unsupported file type: ' + mimetype);
-        };
+          switch (type) {
+        case 'billing':
+        case 'type2':
+        case 'type3':
+        case 'type4':
+        case 'type5':
+          if (mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            return await parseXLSX(buffer);
+          } else if (mimetype === 'text/csv' || mimetype === 'application/csv') {
+            return await parseCSV(buffer);
+          } else {
+            throw new Error('Unsupported file type: ' + mimetype);
+          };
       case 'type1':
         return await type2CsvParser(buffer);
       default:

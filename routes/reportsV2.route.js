@@ -45,6 +45,7 @@ reportR.post('/organizations/:organizationID',
     { name: 'Global', maxCount: 1 },
     { name: 'Clearent', maxCount: 1 },
     { name: 'Payment Advisors', maxCount: 1 },
+    { name: 'PayBright', maxCount: 1 },
     { name: 'Fiserv Omaha', maxCount: 1 },
     { name: 'Fiserv Bin & ICA', maxCount: 1 }
   ]),
