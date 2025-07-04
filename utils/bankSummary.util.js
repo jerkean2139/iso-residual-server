@@ -4,6 +4,7 @@ import Type1Row from "../classes/type1Row.class.js";
 import Type2Row from "../classes/type2Row.class.js";
 import Type3Row from "../classes/type3Row.class.js";
 import Type4Row from "../classes/type4Row.class.js";
+import Type5Row from "../classes/type5Row.class.js";
 export default class BankSummaryReportUtil {
 
     static buildBankSummaryReport = (organizationID, monthYear, processorReports) => {
@@ -59,8 +60,17 @@ const buildProcessorReportData = (report) => {
 
         //console.log('clientMap:', clientMap);
 
-        // Filter report data to include only rows where the Merchant ID exists in the bank 's clients
+        // Get processor type to handle different filtering logic
+        const processorType = processorTypeMap[report.processor];
+        
+        // Filter report data based on processor type
         const filteredReportData = report.reportData.filter(row => {
+            // For PayBright (type5), include all rows since it doesn't use Branch ID
+            if (processorType === 'type5') {
+                return row;
+            }
+            
+            // For other processors, check if they have a Branch ID
             const hasBranch = row['Branch ID'] ? true : false;
 
             // Log whether the merchant ID was found or not
@@ -69,7 +79,6 @@ const buildProcessorReportData = (report) => {
             } else {
                 return row;
             }
-
         });
 
         //console.log('Filtered report data:', filteredReportData); // Log filtered data
