@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js';
 
 export default class Type5Row {
-    constructor(merchantId, merchantName, transaction, salesAmount, income, expenses, net, bps, bankSplit, branchID, needsAudit, splits = []) {
+    constructor(merchantId, merchantName, transaction, salesAmount, income, expenses, net, bps, bankSplit, needsAudit, splits = []) {
         this.needsAudit = needsAudit;
         this['Merchant Id'] = merchantId;
         this['Merchant Name'] = merchantName;
