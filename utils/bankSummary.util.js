@@ -51,8 +51,6 @@ const buildProcessorReportData = (report) => {
     try {
         //console.log('Processing report for processor:', report.processor);
         //console.log('First row of report data structure:', report.reportData[0]); // Log the first row to inspect its structure
-
-
         // Ensure the report data and bank  clients are valid
         if (!report || !Array.isArray(report.reportData)) {
             throw new Error('Invalid report data: report or reportData is missing or not an array');
@@ -69,16 +67,20 @@ const buildProcessorReportData = (report) => {
             if (processorType === 'type5') {
                 return row;
             }
-            
-            // For other processors, check if they have a Branch ID
-            const hasBranch = row['Branch ID'] ? true : false;
 
-            // Log whether the merchant ID was found or not
-            if (!hasBranch) {
-                return;
-            } else {
-                return row;
-            }
+            // For other processors, check if they have a Branch ID
+            //  const hasBranch = row['Branch ID'] ? true : false;
+
+            //  // Log whether the merchant ID was found or not
+            //  if (!hasBranch) {
+            //      return;
+            //  } else {
+            //      return row;
+            //  }
+            
+            // For other processors, include all rows regardless of Branch ID
+            // This ensures we don't lose records with empty Branch IDs
+            return row;
         });
 
         //console.log('Filtered report data:', filteredReportData); // Log filtered data

@@ -176,11 +176,57 @@ static updateReport = async (req, res, next) => {
     }
   };
 
+  // Update report data by adding new merchant entries to all reports of specified type
+  static updateReportDataByType = async (req, res) => {
+    try {
+      const { organizationID } = req.params;
+      const { type, newMerchants } = req.body;
+
+      if (!type || !newMerchants || !Array.isArray(newMerchants)) {
+        return res.status(400).json({ 
+          error: 'type and newMerchants (array) are required in request body' 
+        });
+      }
+
+      const updatedReports = await ReportsV2Coor.updateReportDataByType(
+        organizationID,
+        type,
+        newMerchants
+      );
+      res.json(updatedReports);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  // Update processor report data by adding new merchant entries to all processor reports
+  static updateProcessorReportData = async (req, res) => {
+    try {
+      const { organizationID } = req.params;
+      const { newMerchants } = req.body;
+
+      if (!newMerchants || !Array.isArray(newMerchants)) {
+        return res.status(400).json({ 
+          error: 'newMerchants (array) is required in request body' 
+        });
+      }
+
+      const updatedReports = await ReportsV2Coor.updateProcessorReportData(
+        organizationID,
+        newMerchants
+      );
+      res.json(updatedReports);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
   // Agent Report functions
     // Build agent report
   static buildAgentReport = async (req, res, next) => {
     try {
       const agentReport = await ReportsV2Coor.buildAgentReport(req.params.organizationID, req.params.agentID, req.body.monthYear);
+      console.log(JSON.stringify(agentReport, null, 2));
       if (!agentReport) {
         return res.status(404).json({ message: 'Agent report not found' });
       }
@@ -196,6 +242,9 @@ static updateReport = async (req, res, next) => {
           const monthYear = `${req.params.month} ${req.params.year}`;
           // console.log(`[AgentReport] Fetching report for Month Year: ${monthYear}`);
           const agentReport = await ReportsV2Coor.getAgentReport(req.params.organizationID, req.params.agentID, monthYear);
+
+          // console.log(JSON.stringify(agentReport, null, 2));
+
           
           if (!agentReport || agentReport.length === 0) {
               // console.log(`[AgentReport] No report found for organizationID: ${req.params.organizationID}, agentID: ${req.params.agentID}, monthYear: ${monthYear}`);

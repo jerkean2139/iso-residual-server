@@ -34,6 +34,7 @@ export default class ReportsV2M {
           type: 'processor',
           month: monthYear
         }, { projection: Constants.DEFAULT_PROJECTION }).toArray();
+        // console.log('getProcessorReportsByMonth',reports);
       return reports;
     } catch (error) {
       throw new Error('Error getting reports from DB: ' + error.message);
@@ -379,6 +380,203 @@ export default class ReportsV2M {
       return reports;
     } catch (error) {
       throw new Error(`Error updating merchant data: ${error.message}`);
+    }
+  };
+
+  // Update report data by adding new merchant entries
+  static updateReportData = async (organizationID, processor, monthYear, newMerchants) => {
+    try {
+      // Find the report for the specific month, organization, and processor
+      const report = await db.dbReports().findOne({
+        organizationID,
+        month: monthYear,
+        processor,
+        type: 'processor'
+      });
+
+      if (!report) {
+        throw new Error(`No processor report found for month: ${monthYear} in organization: ${organizationID} and processor: ${processor}`);
+      }
+
+      // Get existing merchant IDs to avoid duplicates
+      const existingMerchantIds = report.reportData.map(merchant => merchant['Merchant Id']);
+      
+      // Filter out merchants that already exist in the report
+      const merchantsToAdd = newMerchants.filter(merchant => 
+        !existingMerchantIds.includes(merchant['Merchant Id'])
+      );
+
+      if (merchantsToAdd.length === 0) {
+        return {
+          message: 'All merchants already exist in the report',
+          report: report,
+          addedCount: 0
+        };
+      }
+
+      // Add new merchants to the report data
+      const updatedReport = await db.dbReports().updateOne(
+        { _id: report._id },
+        {
+          $push: {
+            reportData: { $each: merchantsToAdd }
+          }
+        }
+      );
+
+      if (!updatedReport.modifiedCount) {
+        throw new Error('Failed to update report data');
+      }
+
+      // Return the updated report
+      const updatedReportData = await db.dbReports().findOne({ _id: report._id });
+      return {
+        message: `Successfully added ${merchantsToAdd.length} new merchants to the report`,
+        report: updatedReportData,
+        addedCount: merchantsToAdd.length,
+        addedMerchants: merchantsToAdd
+      };
+    } catch (error) {
+      throw new Error(`Error updating report data: ${error.message}`);
+    }
+  };
+
+  // Update processor report data by adding new merchant entries to all processor reports
+  static updateProcessorReportData = async (organizationID, newMerchants) => {
+    try {
+      // Find all processor reports for the organization
+      const reports = await db.dbReports().find({
+        organizationID,
+        type: 'processor'
+      }).toArray();
+
+      if (!reports || reports.length === 0) {
+        throw new Error(`No processor reports found for organization: ${organizationID}`);
+      }
+
+      const results = [];
+
+      // Update each processor report
+      for (const report of reports) {
+        // Get existing merchant IDs to avoid duplicates
+        const existingMerchantIds = report.reportData.map(merchant => merchant['Merchant Id']);
+        
+        // Filter out merchants that already exist in this report
+        const merchantsToAdd = newMerchants.filter(merchant => 
+          !existingMerchantIds.includes(merchant['Merchant Id'])
+        );
+
+        if (merchantsToAdd.length > 0) {
+          // Add new merchants to the report data
+          const updatedReport = await db.dbReports().updateOne(
+            { _id: report._id },
+            {
+              $push: {
+                reportData: { $each: merchantsToAdd }
+              }
+            }
+          );
+
+          if (updatedReport.modifiedCount) {
+            // Get the updated report
+            const updatedReportData = await db.dbReports().findOne({ _id: report._id });
+            results.push({
+              reportID: report.reportID,
+              processor: report.processor,
+              month: report.month,
+              message: `Successfully added ${merchantsToAdd.length} new merchants`,
+              addedCount: merchantsToAdd.length,
+              addedMerchants: merchantsToAdd
+            });
+          }
+        } else {
+          results.push({
+            reportID: report.reportID,
+            processor: report.processor,
+            month: report.month,
+            message: 'All merchants already exist in this report',
+            addedCount: 0
+          });
+        }
+      }
+
+      return {
+        message: `Updated ${reports.length} processor reports`,
+        totalReports: reports.length,
+        results: results
+      };
+    } catch (error) {
+      throw new Error(`Error updating processor report data: ${error.message}`);
+    }
+  };
+
+  // Update report data by adding new merchant entries to all reports of specified type
+  static updateReportDataByType = async (organizationID, type, newMerchants) => {
+    try {
+      // Find all reports of the specified type for the organization
+      const reports = await db.dbReports().find({
+        organizationID,
+        type: type
+      }).toArray();
+
+      if (!reports || reports.length === 0) {
+        throw new Error(`No ${type} reports found for organization: ${organizationID}`);
+      }
+
+      const results = [];
+
+      // Update each report of the specified type
+      for (const report of reports) {
+        // Get existing merchant IDs to avoid duplicates
+        const existingMerchantIds = report.reportData.map(merchant => merchant['Merchant Id']);
+        
+        // Filter out merchants that already exist in this report
+        const merchantsToAdd = newMerchants.filter(merchant => 
+          !existingMerchantIds.includes(merchant['Merchant Id'])
+        );
+
+        if (merchantsToAdd.length > 0) {
+          // Add new merchants to the report data
+          const updatedReport = await db.dbReports().updateOne(
+            { _id: report._id },
+            {
+              $push: {
+                reportData: { $each: merchantsToAdd }
+              }
+            }
+          );
+
+          if (updatedReport.modifiedCount) {
+            // Get the updated report
+            const updatedReportData = await db.dbReports().findOne({ _id: report._id });
+            results.push({
+              reportID: report.reportID,
+              processor: report.processor || 'N/A',
+              month: report.month,
+              message: `Successfully added ${merchantsToAdd.length} new merchants`,
+              addedCount: merchantsToAdd.length,
+              addedMerchants: merchantsToAdd
+            });
+          }
+        } else {
+          results.push({
+            reportID: report.reportID,
+            processor: report.processor || 'N/A',
+            month: report.month,
+            message: 'All merchants already exist in this report',
+            addedCount: 0
+          });
+        }
+      }
+
+      return {
+        message: `Updated ${reports.length} ${type} reports`,
+        totalReports: reports.length,
+        reportType: type,
+        results: results
+      };
+    } catch (error) {
+      throw new Error(`Error updating ${type} report data: ${error.message}`);
     }
   };
 

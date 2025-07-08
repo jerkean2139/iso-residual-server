@@ -32,7 +32,7 @@ export const uploadAgents = async (req, res, next) => {
         }
 
         // Call the coordinator to process agents from the file
-        const { results, needsAudit, rejectedMerchants } = await AgentsCoordinator.uploadAgents(organizationID, fileBuffer, mimetype);
+        const { results, needsAudit, rejectedMerchants, createdAgents } = await AgentsCoordinator.uploadAgents(organizationID, fileBuffer, mimetype);
 
         // If no agents were created, return an error message
         if (!results || results.length === 0) {
@@ -43,7 +43,8 @@ export const uploadAgents = async (req, res, next) => {
                 message: 'Agents processed successfully',
                 results,
                 needsAudit,
-                rejectedMerchants
+                rejectedMerchants,
+                createdAgents
             });
         }
     } catch (error) {

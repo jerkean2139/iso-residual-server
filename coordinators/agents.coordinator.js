@@ -103,26 +103,45 @@ export default class AgentsCoordinator {
     
             // Add or update the agents in the database
             const allResults = [];
+            // const updatedAgents = [];
+            const createdAgents = [];
+            
             for (const agent of agentsArray) {
                 let result;
+                let agentData;
+                
                 if (Array.isArray(agents) && agents.some(a => a.fName === agent.fName && a.lName === agent.lName)) {
                     // Update existing agent
                     result = await AgentsModel.updateAgent(organizationID, agent);
                     if (!result.acknowledged) {
                         throw new Error('Error updating agent: ' + result.message);
                     }
+                    // Get the updated agent data
+                    // agentData = await AgentsModel.getAgent(organizationID, agent.agentID);
+                    // createdAgents.push(agentData);
                 } else {
                     // Add new agent
                     result = await AgentsModel.createAgent(agent);
                     if (!result.acknowledged) {
                         throw new Error('Error adding agent: ' + result.message);
                     }
+                    // Get the created agent data
+                    agentData = await AgentsModel.getAgent(organizationID, agent.agentID);
+                    createdAgents.push(agentData);
                 }
                 allResults.push(result);
             }
     
-            // Return results, needsAudit, and rejectedMerchants to the controller
-            return { results: allResults, needsAudit, rejectedMerchants };
+            // Return results, needsAudit, rejectedMerchants, and agent data to the controller
+            return { 
+                results: allResults, 
+                needsAudit, 
+                rejectedMerchants,
+                // updatedAgents,
+                createdAgents,
+                // totalUpdated: updatedAgents.length,
+                // totalCreated: createdAgents.length
+            };
         } catch (error) {
             throw new Error('Error adding agents in coordinator: ' + error);
         }
