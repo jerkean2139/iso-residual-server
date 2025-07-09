@@ -69,18 +69,18 @@ const buildProcessorReportData = (report) => {
             }
 
             // For other processors, check if they have a Branch ID
-            //  const hasBranch = row['Branch ID'] ? true : false;
+             const hasBranch = row['Branch ID'] ? true : false;
 
-            //  // Log whether the merchant ID was found or not
-            //  if (!hasBranch) {
-            //      return;
-            //  } else {
-            //      return row;
-            //  }
+             // Log whether the merchant ID was found or not
+             if (!hasBranch) {
+                 return;
+             } else {
+                 return row;
+             }
             
             // For other processors, include all rows regardless of Branch ID
             // This ensures we don't lose records with empty Branch IDs
-            return row;
+            // return row;
         });
 
         //console.log('Filtered report data:', filteredReportData); // Log filtered data

@@ -117,8 +117,8 @@ export default class AgentsCoordinator {
                         throw new Error('Error updating agent: ' + result.message);
                     }
                     // Get the updated agent data
-                    // agentData = await AgentsModel.getAgent(organizationID, agent.agentID);
-                    // createdAgents.push(agentData);
+                    agentData = await AgentsModel.getAgent(organizationID, agent.agentID);
+                    createdAgents.push(agentData);
                 } else {
                     // Add new agent
                     result = await AgentsModel.createAgent(agent);
