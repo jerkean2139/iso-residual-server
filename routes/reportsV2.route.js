@@ -97,6 +97,8 @@ reportR.delete('/:reportID', ReportsV2Con.deleteReport);
 reportR.put('/:reportID', ReportsV2Con.updateReport);
     // update merchant data by ID
 reportR.put('/merchant/:merchantId', ReportsV2Con.updateMerchantDataByID);
+    // update report data by adding new merchants to all reports of specified type
+reportR.put('/organizations/:organizationID/update-report-data', ReportsV2Con.updateReportDataByType);
 
 // Multer error handling middleware
 reportR.use((err, req, res, next) => {

@@ -105,6 +105,168 @@ export default class ReportsV2Coor {
     }
   };
 
+  // Update report data by adding new merchant entries
+  static updateReportData = async (organizationID, processor, monthYear, newMerchants) => {
+    try {
+      // Validate required fields
+      if (!organizationID || !processor || !monthYear || !newMerchants) {
+        throw new Error('Missing required fields: organizationID, processor, monthYear, and newMerchants are required');
+      }
+
+      // Ensure newMerchants is an array
+      if (!Array.isArray(newMerchants)) {
+        throw new Error('newMerchants must be an array');
+      }
+
+      // Update the report data by adding new merchants
+      const updatedReports = await ReportsV2M.updateReportData(
+        organizationID,
+        processor,
+        monthYear,
+        newMerchants
+      );
+      return updatedReports;
+    } catch (error) {
+      throw new Error('Error updating report data: ' + error.message);
+    }
+  };
+
+  // Update processor report data by adding new merchant entries to all processor reports
+  static updateProcessorReportData = async (organizationID, newMerchants) => {
+    try {
+      // Validate required fields
+      if (!organizationID || !newMerchants) {
+        throw new Error('Missing required fields: organizationID and newMerchants are required');
+      }
+
+      // Ensure newMerchants is an array
+      if (!Array.isArray(newMerchants)) {
+        throw new Error('newMerchants must be an array');
+      }
+
+      // Process and format the merchant data
+      const formattedMerchants = newMerchants.map(merchant => ({
+        needsAudit: false,
+        "Merchant Id": merchant["Merchant Id"],
+        "Merchant Name": merchant["Merchant Name"],
+        "Transaction": 0,
+        "Sales Amount": 0,
+        "Income": 0,
+        "Expenses": 0,
+        "Net": 0,
+        "BPS": "0.00",
+        "%": "0%",
+        "Agent Net": 0,
+        "Branch ID": merchant["Branch ID"],
+        "approved": false
+      }));
+
+      // Update all processor reports for the organization
+      const updatedReports = await ReportsV2M.updateProcessorReportData(
+        organizationID,
+        formattedMerchants
+      );
+      return updatedReports;
+    } catch (error) {
+      throw new Error('Error updating processor report data: ' + error.message);
+    }
+  };
+
+  // Update report data by adding new merchant entries to all reports of specified type
+  static updateReportDataByType = async (organizationID, type, newMerchants) => {
+    try {
+      // Validate required fields
+      if (!organizationID || !type || !newMerchants) {
+        throw new Error('Missing required fields: organizationID, type, and newMerchants are required');
+      }
+
+      // Ensure newMerchants is an array
+      if (!Array.isArray(newMerchants)) {
+        throw new Error('newMerchants must be an array');
+      }
+
+      // Process and format the merchant data based on type
+      let formattedMerchants;
+      
+      if (type === 'processor') {
+        formattedMerchants = newMerchants.map(merchant => ({
+          needsAudit: false,
+          "Merchant Id": merchant["Merchant Id"],
+          "Merchant Name": merchant["Merchant Name"],
+          "Transaction": 0,
+          "Sales Amount": 0,
+          "Income": 0,
+          "Expenses": 0,
+          "Net": 0,
+          "BPS": "0.00",
+          "%": "0%",
+          "Agent Net": 0,
+          "Branch ID": merchant["Branch ID"],
+          "approved": false
+        }));
+      } else if (type === 'agent') {
+        formattedMerchants = newMerchants.map(merchant => ({
+          needsAudit: false,
+          "Merchant Id": merchant["Merchant Id"],
+          "Merchant Name": merchant["Merchant Name"],
+          "Transaction": 0,
+          "Sales Amount": 0,
+          "Income": 0,
+          "Expenses": 0,
+          "Net": 0,
+          "BPS": "0.00",
+          "%": "0%",
+          "Agent Net": 0,
+          "Branch ID": merchant["Branch ID"],
+          "approved": false
+        }));
+      } else if (type === 'ar') {
+        formattedMerchants = newMerchants.map(merchant => ({
+          needsAudit: false,
+          "Merchant Id": merchant["Merchant Id"],
+          "Merchant Name": merchant["Merchant Name"],
+          "Transaction": 0,
+          "Sales Amount": 0,
+          "Income": 0,
+          "Expenses": 0,
+          "Net": 0,
+          "BPS": "0.00",
+          "%": "0%",
+          "Agent Net": 0,
+          "Branch ID": merchant["Branch ID"],
+          "approved": false
+        }));
+      } else {
+        // Default format for other types
+        formattedMerchants = newMerchants.map(merchant => ({
+          needsAudit: false,
+          "Merchant Id": merchant["Merchant Id"],
+          "Merchant Name": merchant["Merchant Name"],
+          "Transaction": 0,
+          "Sales Amount": 0,
+          "Income": 0,
+          "Expenses": 0,
+          "Net": 0,
+          "BPS": "0.00",
+          "%": "0%",
+          "Agent Net": 0,
+          "Branch ID": merchant["Branch ID"],
+          "approved": false
+        }));
+      }
+
+      // Update all reports of the specified type for the organization
+      const updatedReports = await ReportsV2M.updateReportDataByType(
+        organizationID,
+        type,
+        formattedMerchants
+      );
+      return updatedReports;
+    } catch (error) {
+      throw new Error('Error updating report data by type: ' + error.message);
+    }
+  };
+
   // AR report functions
   // Create an AR report
   static createArReport = async (
