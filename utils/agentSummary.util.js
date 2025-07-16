@@ -90,6 +90,15 @@ const calculateAgentTotals = (agentReport) => {
                     agentTotals.totalAgentNet += parseFloat(row['Agent Net'] || row['Bank Payout']) || 0;
                     break;
 
+                case 'type5':
+                    agentTotals.totalTransactions += parseFloat(row['Transaction'] || row['Sales']) || 0;
+                    agentTotals.totalSalesAmount += parseFloat(row['Sales Amount'] || row['Volume']) || 0;
+                    agentTotals.totalIncome += parseFloat(row['Income']) || 0;
+                    agentTotals.totalExpenses += parseFloat(row['Expenses']) || 0;
+                    agentTotals.totalNet += parseFloat(row['Net'] || row['Payout Amount']) || 0;
+                    agentTotals.totalAgentNet += parseFloat(row['Agent Net'] || row['Bank Payout']) || 0;
+                    break;
+
                 default:
                     throw new Error(`Unknown processor type: ${processorType}`);
             }
