@@ -64,19 +64,19 @@ const buildProcessorReportData = (report) => {
         // Filter report data based on processor type
         const filteredReportData = report.reportData.filter(row => {
             // For PayBright (type5), include all rows since it doesn't use Branch ID
-            if (processorType === 'type5') {
-                return row;
-            }
+            // if (processorType === 'type5') {
+            //     return row;
+            // }
 
             // For other processors, check if they have a Branch ID
              const hasBranch = row['Branch ID'] ? true : false;
 
-             // Log whether the merchant ID was found or not
-             if (!hasBranch) {
-                 return;
-             } else {
-                 return row;
-             }
+            // Log whether the merchant ID was found or not
+            if (!hasBranch) {
+                return false; // Exclude rows without Branch ID
+            } else {
+                return true; // Include rows with Branch ID
+            }
             
             // For other processors, include all rows regardless of Branch ID
             // This ensures we don't lose records with empty Branch IDs
