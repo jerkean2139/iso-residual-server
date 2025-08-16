@@ -116,16 +116,16 @@ const buildProcessorReportData = (report, agent) => {
             agent.agentSplit.includes("%")
           ) {
             agentSplit = parseFloat(agent.agentSplit) / 100;
-            console.log(
-              `Default case (percentage string): agentSplit parsed from "${agent.agentSplit}" → ${agentSplit}`
-            );
+            // console.log(
+            //   `Default case (percentage string): agentSplit parsed from "${agent.agentSplit}" → ${agentSplit}`
+            // );
           } else if (typeof agent.agentSplit === "number") {
             agentSplit = agent.agentSplit;
-            console.log(`Default case (number): agentSplit → ${agentSplit}`);
+            // console.log(`Default case (number): agentSplit → ${agentSplit}`);
           } else {
-            console.warn(
-              `Default case (invalid agentSplit): "${agent.agentSplit}" → fallback to 0.4`
-            );
+            // console.warn(
+            //   `Default case (invalid agentSplit): "${agent.agentSplit}" → fallback to 0.4`
+            // );
             agentSplit = "0%";
           }
           break;
@@ -195,6 +195,24 @@ const buildProcessorReportData = (report, agent) => {
             "Merchant Id": row["Merchant Id"],
             "Merchant Name": row["Merchant Name"],
             Net: row["Net"],
+            "Agent Split": convertToPercentage(agentSplit),
+            "Agent Net": row["Net"] * agentSplit,
+            "Branch ID": branchID,
+            splits: row.splits || [],
+            approved: row.approved || false
+          };
+          break;
+
+        case "type5":
+          finalReportRow = {
+            "Merchant Id": row["Merchant Id"],
+            "Merchant Name": row["Merchant Name"],
+            Transaction: row["Transaction"],
+            "Sales Amount": row["Sales Amount"],
+            Income: row["Income"],
+            Expenses: row["Expenses"],
+            Net: row["Net"],
+            BPS: row["BPS"],
             "Agent Split": convertToPercentage(agentSplit),
             "Agent Net": row["Net"] * agentSplit,
             "Branch ID": branchID,
